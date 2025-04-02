@@ -1,0 +1,1 @@
+print("Round 2: GITXub “EC2” 정수 휴공함) ")
