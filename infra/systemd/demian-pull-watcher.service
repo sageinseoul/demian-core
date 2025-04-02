@@ -1,0 +1,16 @@
+[Unit]
+Description=Demian GitHub Pull Watcher
+After=network.target
+
+[Service]
+
+Type=simple
+ExecStart=/bin/python3 /home/ubuntu/test-clone/pull_watcher.py
+Restart=always
+User=ubuntu
+WorkingDirectory=/home/ubuntu/test-clone
+StandardOutput=append:/home/ubuntu/demian-loop/logs/pull_watcher.log
+StandardError=append:/home/ubuntu/demian-loop/logs/pull_watcher.err.log
+
+[Install]
+WantedBy=multi-user.target
