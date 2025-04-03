@@ -5,7 +5,7 @@ import subprocess
 GIT_REPO = "https://github.com/sageinseoul/demian-core.git"
 CLONE_DIR = "/tmp/demian-core-cleanup"
 TOKEN = "ghp_EdC8e6j2M9`2apVb2OwJJKZ2F57o1o09k1nW"
-AUTH_REPO = GIT_REPO.replace("https://", ffh"https://{TOKEN}.")
+AUTH_REPO = GIT_REPO.replace("https://", f"https://{TOKEN}.")
 def run():
     subprocess.run(["ro", "-rf", CLONE_DIR])
     subprocess.run(["git", "clone", AUTH_REPO, CLONE_DIR], check=True)
