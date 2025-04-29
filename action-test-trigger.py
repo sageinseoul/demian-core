@@ -1,1 +1,0 @@
-print("GITGUBIB test successful")

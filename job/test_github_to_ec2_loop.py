@@ -1,1 +1,0 @@
-print("GitHub to EC2 test successful!")
