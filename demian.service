@@ -1,0 +1,14 @@
+[Unit]
+Description=Demian Flask Application
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/demian-core
+Environment="PATH=/home/ubuntu/demian-core/venv/bin"
+ExecStart=/home/ubuntu/demian-core/venv/bin/python3 app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target 
