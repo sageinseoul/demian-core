@@ -1,109 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>실시간 채팅</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>세무 자동화 서비스</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+        .tab-content {
+            display: none;
         }
-        #messages {
-            height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-        .message {
-            margin-bottom: 10px;
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
-        .message .username {
-            font-weight: bold;
-            color: #333;
-        }
-        .message .timestamp {
-            font-size: 0.8em;
-            color: #666;
-        }
-        #message-form {
-            display: flex;
-            gap: 10px;
-        }
-        #username {
-            width: 150px;
-        }
-        #text {
-            flex-grow: 1;
-        }
-        button {
-            padding: 5px 15px;
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
-<body>
-    <h1>실시간 채팅</h1>
-    <div id="messages">
-        {% for message in messages %}
-        <div class="message">
-            <span class="username">{{ message.username }}</span>
-            <span class="timestamp">{{ message.timestamp }}</span>
-            <p>{{ message.text }}</p>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- 좌측 사이드바 (1/6) -->
+        <div class="w-1/6 bg-white shadow-lg">
+            <div class="p-4">
+                <div class="relative">
+                    <button id="bizNoDropdown" class="w-full bg-white border border-gray-300 rounded-md px-4 py-2 text-left focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <span class="block text-sm font-medium text-gray-700">사업자 등록번호</span>
+                        <span id="selectedBizNo" class="block text-sm text-gray-500">선택하세요</span>
+                    </button>
+                    <div id="dropdownMenu" class="absolute hidden w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                        <div class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" onclick="selectBizNo('123-45-67890')">123-45-67890</div>
+                        <div class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" onclick="selectBizNo('234-56-78901')">234-56-78901</div>
+                        <div class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" onclick="selectBizNo('345-67-89012')">345-67-89012</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endfor %}
+
+        <!-- 우측 메인 컨텐츠 (5/6) -->
+        <div class="w-5/6">
+            <!-- 탭 메뉴 -->
+            <div class="bg-white shadow-lg">
+                <div class="flex">
+                    <button class="tab-button px-6 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none" onclick="showTab('withholding')">원천세</button>
+                    <button class="tab-button px-6 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none" onclick="showTab('vat')">부가세</button>
+                    <button class="tab-button px-6 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 focus:outline-none" onclick="showTab('income')">종합소득세</button>
+                </div>
+            </div>
+
+            <!-- 탭 컨텐츠 -->
+            <div class="p-6">
+                <div id="withholding" class="tab-content active">
+                    <h2 class="text-2xl font-bold mb-4">원천세 관리</h2>
+                    <!-- 원천세 컨텐츠 -->
+                </div>
+                <div id="vat" class="tab-content">
+                    <h2 class="text-2xl font-bold mb-4">부가세 관리</h2>
+                    <!-- 부가세 컨텐츠 -->
+                </div>
+                <div id="income" class="tab-content">
+                    <h2 class="text-2xl font-bold mb-4">종합소득세 관리</h2>
+                    <!-- 종합소득세 컨텐츠 -->
+                </div>
+            </div>
+        </div>
     </div>
-    <form id="message-form">
-        <input type="text" id="username" placeholder="사용자 이름" required>
-        <input type="text" id="text" placeholder="메시지를 입력하세요" required>
-        <button type="submit">전송</button>
-    </form>
 
     <script>
-        var socket = io();
-        
-        socket.on('connect', function() {
-            console.log('Connected to server');
+        // 드롭다운 메뉴 토글
+        document.getElementById('bizNoDropdown').addEventListener('click', function() {
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
         });
 
-        socket.on('message_history', function(messages) {
-            messages.forEach(function(message) {
-                appendMessage(message);
-            });
-        });
-
-        socket.on('new_message', function(message) {
-            appendMessage(message);
-        });
-
-        function appendMessage(message) {
-            var messagesDiv = document.getElementById('messages');
-            var messageElement = document.createElement('div');
-            messageElement.className = 'message';
-            messageElement.innerHTML = `
-                <span class="username">${message.username}</span>
-                <span class="timestamp">${message.timestamp}</span>
-                <p>${message.text}</p>
-            `;
-            messagesDiv.appendChild(messageElement);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        // 사업자 번호 선택
+        function selectBizNo(number) {
+            document.getElementById('selectedBizNo').textContent = number;
+            document.getElementById('dropdownMenu').classList.add('hidden');
         }
 
-        document.getElementById('message-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var username = document.getElementById('username').value;
-            var text = document.getElementById('text').value;
-            
-            socket.emit('send_message', {
-                username: username,
-                text: text
+        // 탭 전환
+        function showTab(tabId) {
+            // 모든 탭 컨텐츠 숨기기
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
             
-            document.getElementById('text').value = '';
-        });
+            // 선택한 탭 컨텐츠 표시
+            document.getElementById(tabId).classList.add('active');
+        }
     </script>
 </body>
 </html> 

@@ -2,20 +2,19 @@ import os
 from datetime import timedelta
 
 class Config:
-    # Flask 기본 설정
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key'
-    DEBUG = False
+    SECRET_KEY = 'your-secret-key'
+    DEBUG = True
     
     # 데이터베이스 설정
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # JWT 설정
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-key'
+    JWT_SECRET_KEY = 'your-jwt-secret-key'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     
     # CORS 설정
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:5000').split(',')
+    CORS_ORIGINS = ["http://localhost:5000"]
     
     # AWS 설정
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
@@ -33,7 +32,5 @@ class ProductionConfig(Config):
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
 
 config = {
-    'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'default': DevelopmentConfig
+    'default': Config
 } 

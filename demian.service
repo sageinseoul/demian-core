@@ -7,7 +7,7 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/home/ubuntu/demian-core
 Environment="PATH=/home/ubuntu/demian-core/venv/bin"
-ExecStart=/home/ubuntu/demian-core/venv/bin/python3 app.py
+ExecStart=/home/ubuntu/demian-core/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 app:app
 Restart=always
 
 [Install]
