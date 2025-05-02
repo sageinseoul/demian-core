@@ -1,29 +1,17 @@
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import React from 'react';
+import { Box, CssBaseline } from '@mui/material';
 import Layout from './components/Layout';
-import BusinessNumberDropdown from './components/BusinessNumberDropdown';
-import TaxTabs from './components/Tabs';
-import './App.css';
+import Tabs from './components/Tabs';
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#1976d2',
-    },
-  },
-});
-
-function App() {
+const App: React.FC = () => {
   return (
-    <ThemeProvider theme={theme}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <Layout
-        leftContent={<BusinessNumberDropdown />}
-        rightContent={<TaxTabs />}
-      />
-    </ThemeProvider>
+      <Layout>
+        <Tabs />
+      </Layout>
+    </Box>
   );
-}
+};
 
 export default App; 

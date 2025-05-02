@@ -30,6 +30,7 @@ import * as XLSX from 'xlsx';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import WithholdingTaxForm from './WithholdingTaxForm';
 
 interface NonTaxableItem {
   id: number;
@@ -46,19 +47,20 @@ interface Employee {
   salary: number;
   nonTaxableAmount: number;
   nonTaxableItems: NonTaxableItem[];
+  taxAmount: number;
 }
 
 const initialEmployees: Employee[] = [
-  { id: 1, name: '김철수', employmentType: '정규직', position: '개발자', residentNumber: '900101-1234567', salary: 3000000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 2, name: '이영희', employmentType: '정규직', position: '디자이너', residentNumber: '910202-2345678', salary: 3500000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 3, name: '박민수', employmentType: '비정규직', position: '인턴', residentNumber: '920303-3456789', salary: 2500000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 4, name: '최지원', employmentType: '정규직', position: '마케터', residentNumber: '930404-4567890', salary: 4000000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 5, name: '정다은', employmentType: '비정규직', position: '보조', residentNumber: '940505-5678901', salary: 2800000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 6, name: '강민준', employmentType: '정규직', position: '기획자', residentNumber: '950606-6789012', salary: 3200000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 7, name: '윤서연', employmentType: '비정규직', position: '보조', residentNumber: '960707-7890123', salary: 2700000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 8, name: '장지훈', employmentType: '정규직', position: '개발자', residentNumber: '970808-8901234', salary: 3800000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 9, name: '한수아', employmentType: '비정규직', position: '인턴', residentNumber: '980909-9012345', salary: 2600000, nonTaxableAmount: 0, nonTaxableItems: [] },
-  { id: 10, name: '신준호', employmentType: '정규직', position: '디자이너', residentNumber: '991010-0123456', salary: 4200000, nonTaxableAmount: 0, nonTaxableItems: [] },
+  { id: 1, name: '김철수', employmentType: '정규직', position: '개발자', residentNumber: '900101-1234567', salary: 3000000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 2, name: '이영희', employmentType: '정규직', position: '디자이너', residentNumber: '910202-2345678', salary: 3500000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 3, name: '박민수', employmentType: '비정규직', position: '인턴', residentNumber: '920303-3456789', salary: 2500000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 4, name: '최지원', employmentType: '정규직', position: '마케터', residentNumber: '930404-4567890', salary: 4000000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 5, name: '정다은', employmentType: '비정규직', position: '보조', residentNumber: '940505-5678901', salary: 2800000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 6, name: '강민준', employmentType: '정규직', position: '기획자', residentNumber: '950606-6789012', salary: 3200000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 7, name: '윤서연', employmentType: '비정규직', position: '보조', residentNumber: '960707-7890123', salary: 2700000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 8, name: '장지훈', employmentType: '정규직', position: '개발자', residentNumber: '970808-8901234', salary: 3800000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 9, name: '한수아', employmentType: '비정규직', position: '인턴', residentNumber: '980909-9012345', salary: 2600000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
+  { id: 10, name: '신준호', employmentType: '정규직', position: '디자이너', residentNumber: '991010-0123456', salary: 4200000, nonTaxableAmount: 0, nonTaxableItems: [], taxAmount: 0 },
 ];
 
 const StyledTableContainer = styled(TableContainer)({
@@ -98,6 +100,7 @@ function EmployeeList() {
   const [newCategory, setNewCategory] = useState('');
   const [newAmount, setNewAmount] = useState('');
   const [editingItem, setEditingItem] = useState<NonTaxableItem | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleChange = (id: number, field: keyof Employee, value: string | number) => {
     setEmployees(prevEmployees =>
@@ -119,6 +122,7 @@ function EmployeeList() {
 
   const handleCloseDialog = () => {
     setSelectedEmployee(null);
+    setOpenDialog(false);
   };
 
   const handleShowTaxReport = () => {
@@ -144,6 +148,7 @@ function EmployeeList() {
       salary: parseInt(row['세전급여']) || 0,
       nonTaxableAmount: parseInt(row['비과세금액']) || 0,
       nonTaxableItems: [],
+      taxAmount: 0,
     }));
   };
 
@@ -256,6 +261,11 @@ function EmployeeList() {
     setSelectedEmployee(updatedEmployee);
   };
 
+  const handleOpenDialog = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setOpenDialog(true);
+  };
+
   return (
     <Box sx={{ width: '100%', p: 2 }}>
       <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
@@ -293,6 +303,8 @@ function EmployeeList() {
               <StyledTableCell>주민번호</StyledTableCell>
               <StyledTableCell>세전급여</StyledTableCell>
               <StyledTableCell>비과세금액</StyledTableCell>
+              <StyledTableCell>과세대상금액</StyledTableCell>
+              <StyledTableCell>세액</StyledTableCell>
               <StyledTableCell>원천세 신고서</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -356,10 +368,16 @@ function EmployeeList() {
                   </Button>
                 </StyledTableCell>
                 <StyledTableCell>
+                  {(employee.salary - employee.nonTaxableAmount).toLocaleString()}원
+                </StyledTableCell>
+                <StyledTableCell>
+                  {employee.taxAmount.toLocaleString()}원
+                </StyledTableCell>
+                <StyledTableCell>
                   <Button
                     variant="contained"
                     size="small"
-                    onClick={handleShowTaxReport}
+                    onClick={() => handleOpenDialog(employee)}
                   >
                     보기
                   </Button>
@@ -475,6 +493,14 @@ function EmployeeList() {
           엑셀 파일은 다음 형식이어야 합니다: 이름, 고용형태(정규직/비정규직), 직무, 주민번호, 세전급여, 비과세금액
         </Typography>
       </Box>
+
+      {selectedEmployee && (
+        <WithholdingTaxForm
+          open={openDialog}
+          onClose={handleCloseDialog}
+          employeeData={selectedEmployee}
+        />
+      )}
     </Box>
   );
 }
