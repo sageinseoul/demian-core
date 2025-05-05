@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Tabs as MuiTabs, Tab, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import EmployeeList from './EmployeeList';
+import OCRResult from './OCRResult';
 
 const StyledTabs = styled(MuiTabs)({
   borderBottom: '1px solid #e8e8e8',
@@ -48,6 +49,7 @@ const tabs = [
   { label: '원천세', content: <EmployeeList /> },
   { label: '부가세', content: '부가세 페이지 내용' },
   { label: '종합소득세', content: '종합소득세 페이지 내용' },
+  { label: 'OCR 결과', content: <OCRResult /> },
 ];
 
 function TaxTabs() {
