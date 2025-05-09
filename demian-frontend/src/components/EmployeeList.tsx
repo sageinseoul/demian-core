@@ -31,6 +31,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import WithholdingTaxForm from './WithholdingTaxForm';
+import WithholdingTaxReport from './WithholdingTaxReport';
 
 interface NonTaxableItem {
   id: number;
@@ -89,6 +90,32 @@ const StyledDialog = styled(Dialog)({
     minWidth: '300px',
   },
 });
+
+// 샘플 데이터 (실제 연동 시 props로 대체)
+const sampleReportData = {
+  businessNumber: '123-45-67890',
+  businessName: '데미안 주식회사',
+  representativeName: '하성원',
+  address: '서울특별시 강남구 테헤란로 123',
+  employees: [
+    {
+      name: '홍길동',
+      residentNumber: '900101-1234567',
+      employmentType: '정규직' as '정규직',
+      salary: 3000000,
+      taxAmount: 150000,
+      nonTaxableAmount: 200000,
+    },
+    {
+      name: '김철수',
+      residentNumber: '850505-2345678',
+      employmentType: '비정규직' as '비정규직',
+      salary: 2200000,
+      taxAmount: 90000,
+      nonTaxableAmount: 100000,
+    },
+  ],
+};
 
 function EmployeeList() {
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
@@ -464,7 +491,7 @@ function EmployeeList() {
           <Typography variant="h6" gutterBottom>
             {selectedYear}년 {selectedMonth}월 원천세 신고서
           </Typography>
-          {/* TODO: 원천세 신고서 내용 구현 */}
+          <WithholdingTaxReport data={sampleReportData} />
         </DialogContent>
       </Dialog>
 
